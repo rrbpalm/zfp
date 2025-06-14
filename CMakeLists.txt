@@ -97,11 +97,14 @@ include(CMakeDependentOption)
 # Setup shared library / -fPIC stuff
 get_property(SHARED_LIBS_SUPPORTED GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS)
 cmake_dependent_option(BUILD_SHARED_LIBS
-  "Whether or not to build shared libraries" ON
+  "Whether or not to build shared libraries" OFF
   "SHARED_LIBS_SUPPORTED" OFF)
 
 # PIC is always on for shared libs.  This allows it to be selectable for
 # static libs.
+
+option(ZFP_ENABLE_PIC "Build with -fPIC" ON)
+
 if(DEFINED ZFP_ENABLE_PIC)
   set(ZFP_ENABLE_PIC_DEFAULT ${ZFP_ENABLE_PIC})
 elseif(DEFINED CMAKE_POSITION_INDEPENDENT_CODE)
@@ -169,6 +172,9 @@ endif()
 
 # This odd cmake pattern here lets the OpenMP feature be either auto-detected,
 # explicitly enabled, or explicitly disabled, instead of just on or off.
+
+option(ZFP_WITH_OPENMP    "Build with OpenMP" OFF)
+
 if(DEFINED ZFP_WITH_OPENMP)
   option(ZFP_WITH_OPENMP "Enable OpenMP parallel compression"
     ${ZFP_WITH_OPENMP})
@@ -273,6 +279,9 @@ endif()
 #------------------------------------------------------------------------------#
 # Add source code
 #------------------------------------------------------------------------------#
+option(BUILD_TESTING      "enable testing"      OFF)
+option(BUILD_TESTING_FULL "enable all testing"  OFF)
+
 include(CTest)
 if(BUILD_TESTING OR BUILD_TESTING_FULL)
   enable_testing()
@@ -308,7 +317,7 @@ if(BUILD_ZFPY)
   add_subdirectory(python)
 endif()
 
-option(BUILD_UTILITIES "Build command line utilities for zfp" ON)
+option(BUILD_UTILITIES "Build command line utilities for zfp" OFF)
 if(BUILD_UTILITIES)
   add_subdirectory(utils)
 endif()
